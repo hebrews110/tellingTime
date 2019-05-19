@@ -1,0 +1,287 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+@font-face {
+    font-family: 'dseg7_modernbold';
+    src: url('dseg7modern-bold-webfont.woff2') format('woff2'),
+         url('dseg7modern-bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+
+body, html {
+    margin: 0;
+    text-align: center;
+}
+
+#selector {
+    margin: 10px;
+}
+
+.clock {
+    width: 35vmin;
+    height: 35vmin;
+    border: 8px black solid;
+    border-radius: 50%;
+    position: relative;
+    display: inline-block;
+}
+
+
+
+
+.clock-hand {
+    background-color: black;
+    border-top: 40px solid;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 3%;
+    height: 50%;
+    border-color: rgba(0, 0, 0, 0);
+    background-clip: padding-box !important;
+    transform-origin: bottom center;
+    transform: translateX(-50%) rotate(90deg);
+    -webkit-backface-visibility: hidden;
+}
+
+.instrs {
+    font-size: 14px;
+}
+
+
+.alarm-clock {
+    margin-bottom: calc(1vmax + 1%);
+    display: inline-block;
+    background: rgb(60, 60, 60);
+    width: auto;
+    padding: 1vmin 2vmin;
+    border: 8px black solid;
+    box-sizing: border-box;
+    position: relative;
+    text-align: center;
+    color: lightgreen;
+    white-space: nowrap;
+    font-family: "dseg7_modernbold";
+    font-size: 6vmin;
+}
+
+#chooser {
+    text-align: left;
+    max-width: 700px;
+}
+
+#selector, #chooser {
+    display: inline-block;
+}
+
+a { text-decoration: underline; color:blue; }
+
+@media (orientation: portrait) {
+    .clock {
+        width: 40vmin;
+        height: 40vmin;
+    }
+    .alarm-clock {
+        font-size: 10vmin;
+    }
+}
+
+.time-phrase {
+    font-weight: bold;
+}
+
+.my-button {
+    height: 30px;
+    width: 100px;
+}
+
+.button-image {
+    max-height: 100%;
+    max-width: 25%;
+    vertical-align: middle;
+}
+
+button:disabled .button-image {
+    filter: grayscale(1);
+    -webkit-filter: grayscale(1);
+}
+
+.alarm-clock-digit {
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    border: none;
+    position: relative;
+    width: 0.8em;
+    color: inherit;
+    background: none;
+    z-index: 1;
+    overflow: hidden;
+    caret-color: transparent !important;
+    height: 100%;
+    display: inline-block;
+    line-height: 100%;
+}
+
+@keyframes blinker {
+  from,
+  49.9% {
+    color: transparent;
+  }
+  50%,
+  to {
+    color: inherit;
+  }
+}
+
+@-moz-keyframes blinker {
+  from,
+  49.9% {
+    color: transparent;
+  }
+  50%,
+  to {
+    color: inherit;
+  }
+}
+
+@-webkit-keyframes blinker {
+  from,
+  49.9% {
+    color: transparent;
+  }
+  50%,
+  to {
+    color: inherit;
+  }
+}
+
+.alarm-clock-digit:not([disabled]):focus {
+    animation-name: blinker;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    -moz-animation-name: blinker;
+    -moz-animation-duration: 1s;
+    -moz-animation-timing-function: linear;
+    -moz-animation-iteration-count: infinite;
+    -webkit-animation-name: blinker;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+}
+
+.clock-colon, .clock-digit {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#digital-colon {
+    position: relative;
+    z-index: 1;
+}
+
+.clock-digit {
+    position: relative;
+    overflow: hidden;
+}
+.clock-digit:after {
+    content: '8';
+}
+.clock-colon:after, .clock-digit:after {
+    color: rgb(50, 50, 50);
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: left;
+    z-index: 0;
+    width: 0.8em;
+}
+.clock-colon:after {
+    content: ':';
+}
+
+.alarm-clock img {
+    width: 100%;
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    transform: translateY(100%);
+}
+
+.clock-hand:after {
+    content:'';
+    position:absolute;
+    top:   -50%;
+    bottom:-50%; 
+    left:  -50%;
+    right: -50%; 
+} 
+
+.alarm-clock-digit, .clock-hand img:nth-child(1), .clock-ticks, .clock-hand, .clock, .noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.minute-hand {
+    
+    z-index: 1;
+}
+
+.second-hand img:nth-child(1) {
+    display: none;
+}
+
+.second-hand {
+    background-color: brown;
+    width: 2px;
+    z-index: 0;
+    display: none;
+}
+
+.clock-ticks {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.clock-hand img:nth-child(1) {
+    max-width: 400%;
+    pointer-events: none;
+    position: absolute;
+    left: 50%;
+    top: -14%;
+    transform-origin: center center;
+    transform: translateX(-50%);
+}
+
+.hour-hand {
+    background-color: black;
+    border-top-width: 60px;
+    z-index: 2;
+}
+.clock-central-circle {
+    width: 3%;
+    height: 3%;
+    background-color: black;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 1;
+}

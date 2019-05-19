@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Telling Time</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="jquery.ui.touch-punch.min.js"></script>
+        <script src="jquery.mutation-summary.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/phaser@3.16.2/dist/phaser.min.js"></script>
+        <script src="jquery.alterclass.js"></script>
+        <script src="written-number.min.js"></script>
+        <link rel="stylesheet" href="time.css">
+        <script src="time.js"></script>
+    </head>
+    <body>
+        <div id="application">
+            <p style="color: red;" class="correct-text" id="correct-false">Sorry, that was the wrong answer. <span id="clock-correct-answer">Is your clock showing <b><span id="hour"></span>:<span id="minute"></span></b>?</span></p>
+            <p style="color: green; font-weight: bold;" class="correct-text" id="correct-true">Nice work!</p>
+            <p id="mode-0-instrs" class="instrs">
+                What time is the analog clock showing?
+                <br>
+                Click a digit on the digital clock to change it.
+                <br>
+                The digit will flash so you know it is ready for input.
+                <p>
+            </p>
+            <p id="mode-1-instrs" class="instrs">
+                What time is the digital clock showing?
+                <br>
+                Move the hands on the analog clock to match it.
+                <p>
+            </p>
+            <p id="mode-2-instrs" class="instrs">
+                Change the digits on the digital clock to show <span class="time-phrase"></span>.
+                <p>
+            </p>
+            <p id="mode-3-instrs" class="instrs">
+                Move the hands on the analog clock to show <span class="time-phrase"></span>.
+                <p>
+            </p>
+            <div class="clock" id="first-clock" data-type="analog" data-chd="null">
+                <img class="clock-ticks" src="clock-ticks.svg" alt=""/>
+                <div class="clock-central-circle"></div>
+                <div class="clock-hand hour-hand">
+                    <img src="uparrow.svg" alt=""/>
+                </div>
+                <div class="clock-hand minute-hand">
+                    <img src="uparrow.svg" alt=""/>
+                </div>
+                <div class="clock-hand second-hand">
+                    <img src="uparrow.svg" alt=""/>
+                </div>
+            </div>
+            <p>
+            <div class="alarm-clock" id="first-digital-clock" data-type="digital">
+                <img src="alarm_clock.svg" alt=""/>
+                <div class="clock-digit"><input size="1" class="alarm-clock-digit left-hour-digit" value="1"/></div>
+                <div class="clock-digit"><input size="1" class="alarm-clock-digit right-hour-digit" value="2"/></div>
+                <div class="clock-colon"><span id="digital-colon">:</span></div>
+                <div class="clock-digit"><input size="1" class="alarm-clock-digit left-minute-digit" value="0"/></div>
+                <div class="clock-digit"><input size="1" class="alarm-clock-digit right-minute-digit" value="0"/></div>
+            </div>
+
+            <p>
+            <button class="my-button" id="check-button"><img src="Checkmark.svg" alt="" id="checkmark" class="button-image"/> Check</button>
+            <button class="my-button" id="next-button"><img src="arrow_right.svg" alt="" id="right-arrow-image" class="button-image"/> Next</button>
+            <p>
+            <a href="#" onclick="backToSelector();">Ready to try a different mode?</a>
+        </div>
+        <div id="selector">
+            <div id="chooser">
+                <b>Type of game:</b>
+                <p>
+                <label><input type="radio" name="size" value="0" /> Setting Digital Clocks</label>
+                <br>
+                <label><input type="radio" name="size" value="1" /> Setting Analog Clocks</label>
+                <br>
+                <label><input type="radio" name="size" value="2" /> Match Time Phrases to Digital Clocks</label>
+                <br>
+                <label><input type="radio" name="size" value="3" /> Match Time Phrases to Analog Clocks</label>
+                <p>
+                <b>Interval of minutes:</b>
+                <p>
+                <label><input type="radio" name="mg" value="1" /> To the minute</label>
+                <br>
+                <label><input type="radio" name="mg" value="5" /> To 5 minutes</label>
+                <br>
+                <label><input type="radio" name="mg" value="10" /> To 10 minutes</label>
+                <br>
+                <label><input type="radio" name="mg" value="15" /> To the quarter hour</label>
+                <br>
+                <label><input type="radio" name="mg" value="20" /> To 20 minutes</label>
+                <br>
+                <label><input type="radio" name="mg" value="30" /> To the half-hour</label>
+                <br>
+                <label><input type="radio" name="mg" value="60" /> To the hour</label>
+                <p>
+                <center><button id="select-mode">Go!</button></center>
+            </div>
+        </div>
+    </body>
+</html>
