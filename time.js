@@ -118,9 +118,13 @@ $.fn.handId = function() {
         throw "Undefined hand";
 };
 
-$.fn.setClockTime = function(hours, minutes, seconds) {
+$.fn.setClockTime = function(hours, minutes, seconds, duration) {
     if(hours < 0 || hours > 99 || minutes < 0 || minutes > 99)
         return;
+    
+    
+    if(duration === undefined)
+        duration = 0;
     
     hours = (hours % 12);
     
@@ -129,9 +133,10 @@ $.fn.setClockTime = function(hours, minutes, seconds) {
     
     return this.each(function () {
         if($(this).attr("data-type") === "analog") {
-            $(this).animateHand(0, hours * 5, 0);
-            $(this).animateHand(1, minutes, 0);
-            $(this).animateHand(2, seconds, 0);
+            console.log("Minutes: " + minutes);
+            $(this).animateHand(0, (hours * 5) + hourOffsetFromMinutes(minutes), duration);
+            $(this).animateHand(1, minutes, duration);
+            $(this).animateHand(2, seconds, duration);
         } else {
             var hours_str = pad(hours, 2);
             var minutes_str = pad(minutes, 2);
@@ -323,6 +328,10 @@ function setCaretPosition(el, caretPos) {
     }
 }
 
+function hourOffsetFromMinutes(m) {
+    return (m / 12);
+}
+
 $(window).load(function() {
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 
@@ -346,7 +355,10 @@ $(window).load(function() {
         $("#selector").hide();
         $(".correct-text").hide();
         $("#done").hide();
+        $("#next-button").prop("disabled", "disabled");
+        $("#check-button").removeProp("disabled");
         $("#application").show();
+        $(window).resize();
     });
     $(".clock-hand").on('dragstart', function(e) {
         e.preventDefault();
@@ -388,15 +400,26 @@ $(window).load(function() {
             if(relY >= 0)
                 angle += 180;
             
-            $clock.animateHand(hand_names.indexOf($clock.attr("data-chd")), angle/6, 0);
-     
             var n = hand_names.indexOf($clock.attr("data-chd"));
+            
+            console.log("Moving: " + hand_names[n]);
+            $clock.animateHand(n, angle/6, 0);
+     
+            
         
-            var h = Math.round(parseFloat($clock.attr("data-rot0")) / 6 / 5);
+            var m = parseInt($clock.attr("data-minute"));
+            
+            var h = Math.round(((parseFloat($clock.attr("data-rot0")) / 5) - hourOffsetFromMinutes(m)) / 6);
+            
+            console.log("Hour is " + h);
             $clock.attr("data-hour", h);
-            var m = Math.round(parseFloat($clock.attr("data-rot1")) / 6);
+            
+            var prev_m = m;
+            m = Math.round(parseFloat($clock.attr("data-rot1")) / 6);
             m = (m % 60);
             m = roundTo(m, minutesGrouping);
+            
+            
             $clock.attr("data-minute", m);
             $clock.setClockTime(h, m, 0);
             
@@ -502,6 +525,8 @@ $(window).load(function() {
         if(!isCorrect) {
             $("#hour").text(ch);
             $("#minute").text(pad(cm, 2));
+            if(gameMode === 1)
+                $(".clock").setClockTime(ch, cm, 0, 1000);
         }
         console.log("Is correct: " + isCorrect);
         $("#next-button").removeProp("disabled");
@@ -517,7 +542,7 @@ $(window).load(function() {
         $("#next-button").prop("disabled", "disabled");
     });
     colonFlash();
-    $(window).resize();
     $("#application").hide();
     $("#selector").show();
+    $(window).resize();
 });
