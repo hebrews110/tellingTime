@@ -22,7 +22,7 @@ and open the template in the editor.
     </head>
     <body>
         <div id="application">
-            <p style="color: red;" class="correct-text" id="correct-false">Sorry, that was the wrong answer. Here's the right one.<span id="clock-correct-answer">Is your clock showing <b><span id="hour"></span>:<span id="minute"></span></b>?</span></p>
+            <p style="color: red;" class="correct-text" id="correct-false">Sorry, that was the wrong answer. <span id="right-one">Here's the right one.</span><span id="clock-correct-answer">Is your clock showing <b><span id="hour"></span>:<span id="minute"></span></b>?</span></p>
             <p style="color: green; font-weight: bold;" class="correct-text" id="correct-true">Nice work!</p>
             <p id="mode-0-instrs" class="instrs">
                 What time is the analog clock showing?
@@ -46,6 +46,14 @@ and open the template in the editor.
                 Move the hands on the analog clock to show <span class="time-phrase"></span>.
                 <p>
             </p>
+            <p id="mode-4-instrs" class="instrs">
+               Enter the amount of time that has elapsed between the first clock and the second clock.
+                <p>
+            </p>
+            <p id="mode-5-instrs" class="instrs">
+                Enter the amount of time that has elapsed between the first clock and the second clock.
+                <p>
+            </p>
             <div class="clock" id="first-clock" data-type="analog" data-chd="null">
                 <img class="clock-ticks" src="clock-ticks.svg" alt=""/>
                 <div class="clock-central-circle"></div>
@@ -59,16 +67,45 @@ and open the template in the editor.
                     <img src="uparrow.svg" alt=""/>
                 </div>
             </div>
+            <div class="clock" id="second-clock" data-type="analog" data-chd="null">
+                <img class="clock-ticks" src="clock-ticks.svg" alt=""/>
+                <div class="clock-central-circle"></div>
+                <div class="clock-hand hour-hand">
+                    <img src="uparrow.svg" alt=""/>
+                </div>
+                <div class="clock-hand minute-hand">
+                    <img src="uparrow.svg" alt=""/>
+                </div>
+                <div class="clock-hand second-hand">
+                    <img src="uparrow.svg" alt=""/>
+                </div>
+            </div>
             <p>
-            <div class="alarm-clock" id="first-digital-clock" data-type="digital">
+            <div class="alarm-clock" id="first-alarm-clock" data-type="digital">
                 <img src="alarm_clock.svg" alt=""/>
                 <div class="clock-digit"><input size="1" class="alarm-clock-digit left-hour-digit" value="1"/></div>
                 <div class="clock-digit"><input size="1" class="alarm-clock-digit right-hour-digit" value="2"/></div>
-                <div class="clock-colon"><span id="digital-colon">:</span></div>
+                <div class="clock-colon"><span class="digital-colon">:</span></div>
                 <div class="clock-digit"><input size="1" class="alarm-clock-digit left-minute-digit" value="0"/></div>
                 <div class="clock-digit"><input size="1" class="alarm-clock-digit right-minute-digit" value="0"/></div>
+                <div class="am-pm"><span class="am-span">AM</span><br><span class="pm-span">PM</span></div>
             </div>
-
+            <div class="alarm-clock" id="second-alarm-clock" data-type="digital">
+                <img src="alarm_clock.svg" alt=""/>
+                <div class="clock-digit"><input size="1" class="alarm-clock-digit left-hour-digit" value="1"/></div>
+                <div class="clock-digit"><input size="1" class="alarm-clock-digit right-hour-digit" value="2"/></div>
+                <div class="clock-colon"><span class="digital-colon">:</span></div>
+                <div class="clock-digit"><input size="1" class="alarm-clock-digit left-minute-digit" value="0"/></div>
+                <div class="clock-digit"><input size="1" class="alarm-clock-digit right-minute-digit" value="0"/></div>
+                <div class="am-pm"><span class="am-span">AM</span><br><span class="pm-span">PM</span></div>
+            </div>
+            <div class="elapsed-time-p">
+                <p>
+                Hours elapsed? <input id="elapsed-hours" class="elapsed-time-input" maxlength="2" size="2"/>
+                <p>
+                Minutes elapsed? <input id="elapsed-minutes" class="elapsed-time-input" maxlength="2" size="2"/>
+                <p>
+            </div>
             <p>
             <button class="my-button" id="check-button"><img src="Checkmark.svg" alt="" id="checkmark" class="button-image"/> Check</button>
             <button class="my-button" id="next-button"><img src="arrow_right.svg" alt="" id="right-arrow-image" class="button-image"/> Next</button>
@@ -79,13 +116,17 @@ and open the template in the editor.
             <div id="chooser">
                 <b>Type of game:</b>
                 <p>
-                <label><input type="radio" name="size" value="0" /> Setting Digital Clocks</label>
+                <label><input type="radio" name="size" value="0" /> Setting Clocks (Digital)</label>
                 <br>
-                <label><input type="radio" name="size" value="1" /> Setting Analog Clocks</label>
+                <label><input type="radio" name="size" value="1" /> Setting Clocks (Analog)</label>
                 <br>
-                <label><input type="radio" name="size" value="2" /> Match Time Phrases to Digital Clocks</label>
+                <label><input type="radio" name="size" value="2" /> Phrase Matching (Digital)</label>
                 <br>
-                <label><input type="radio" name="size" value="3" /> Match Time Phrases to Analog Clocks</label>
+                <label><input type="radio" name="size" value="3" /> Phrase Matching (Analog)</label>
+                <br>
+                <label><input type="radio" name="size" value="4" /> Elapsed Time (Digital)</label>
+                <br>
+                <label><input type="radio" name="size" value="5" /> Elapsed Time (Analog)</label>
                 <p>
                 <b>Interval of minutes:</b>
                 <p>
@@ -103,7 +144,7 @@ and open the template in the editor.
                 <br>
                 <label><input type="radio" name="mg" value="60" /> To the hour</label>
                 <p>
-                <center><button id="select-mode">Go!</button></center>
+                <center><button tabindex="-1" id="select-mode">Go!</button></center>
             </div>
         </div>
     </body>

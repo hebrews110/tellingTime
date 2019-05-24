@@ -8,6 +8,10 @@
 var hand_names = [ "hour-hand", "minute-hand", "second-hand" ];
 
 
+var twoTimes;
+
+var time0_ms, time1_ms;
+
 var gameMode = 0;
 
 var currentPhrase;
@@ -116,6 +120,28 @@ $.fn.handId = function() {
         return "second-hand";
     else
         throw "Undefined hand";
+};
+
+$.fn.amPm = function(isPm) {
+    var $am = $(this).find(".am-span");
+    var $pm = $(this).find(".pm-span");
+    console.log("Clock: " + $(this).attr("id") + " setting " + (isPm ? "PM" : "AM"));
+    if(isPm) {
+        $am.css({ color: 'transparent' });
+        $pm.css({ color: '' });
+    } else {
+        $am.css({ color: '' });
+        $pm.css({ color: 'transparent' });
+    }
+};
+
+$.fn.showAmPm = function(doShow) {
+    if(doShow === undefined)
+        doShow = true;
+    if(doShow)
+        $(this).find(".am-pm").show();
+    else
+        $(this).find(".am-pm").hide();
 };
 
 $.fn.setClockTime = function(hours, minutes, seconds, duration) {
@@ -242,6 +268,90 @@ function updateDigitalClock($clock) {
     $clock.setClockTime(h, m, 0);
 }
 
+var dates = {
+    convert:function(d) {
+        // Converts the date in d to a date-object. The input can be:
+        //   a date object: returned without modification
+        //  an array      : Interpreted as [year,month,day]. NOTE: month is 0-11.
+        //   a number     : Interpreted as number of milliseconds
+        //                  since 1 Jan 1970 (a timestamp) 
+        //   a string     : Any format supported by the javascript engine, like
+        //                  "YYYY/MM/DD", "MM/DD/YYYY", "Jan 31 2009" etc.
+        //  an object     : Interpreted as an object with year, month and date
+        //                  attributes.  **NOTE** month is 0-11.
+        return (
+            d.constructor === Date ? d :
+            d.constructor === Array ? new Date(d[0],d[1],d[2]) :
+            d.constructor === Number ? new Date(d) :
+            d.constructor === String ? new Date(d) :
+            typeof d === "object" ? new Date(d.year,d.month,d.date) :
+            NaN
+        );
+    },
+    compare:function(a,b) {
+        // Compare two dates (could be of any type supported by the convert
+        // function above) and returns:
+        //  -1 : if a < b
+        //   0 : if a = b
+        //   1 : if a > b
+        // NaN : if a or b is an illegal date
+        // NOTE: The code inside isFinite does an assignment (=).
+        return (
+            isFinite(a=this.convert(a).valueOf()) &&
+            isFinite(b=this.convert(b).valueOf()) ?
+            (a>b)-(a<b) :
+            NaN
+        );
+    },
+    inRange:function(d,start,end) {
+        // Checks if date in d is between dates in start and end.
+        // Returns a boolean or NaN:
+        //    true  : if d is between start and end (inclusive)
+        //    false : if d is before start or after end
+        //    NaN   : if one or more of the dates is illegal.
+        // NOTE: The code inside isFinite does an assignment (=).
+       return (
+            isFinite(d=this.convert(d).valueOf()) &&
+            isFinite(start=this.convert(start).valueOf()) &&
+            isFinite(end=this.convert(end).valueOf()) ?
+            start <= d && d <= end :
+            NaN
+        );
+    }
+};
+
+function timeComparison(time0, time1) {
+    var date0 = new Date();
+    var date1 = new Date();
+    
+    console.log("Time0: " + time0);
+    console.log("Time1: " + time1);
+    
+    if(time0[2]) {
+        if(time0[0] < 12) {
+            time0[0] += 12;
+        }
+    } else if(time0[0] === 12) {
+        time0[0] -= 12;
+    }
+    if(time1[2]) {
+        if(time1[0] < 12) {
+            time1[0] += 12;
+        }
+    } else if(time1[0] === 12) {
+        time1[0] -= 12;
+    }
+    
+    console.log("Time0: " + time0);
+    console.log("Time1: " + time1);
+   
+    date0.setTime((time0[0] * 60 * 60 * 1000) + (time0[1] * 60 * 1000));
+    date1.setTime((time1[0] * 60 * 60 * 1000) + (time1[1] * 60 * 1000));
+    time0_ms = date0.getTime();
+    time1_ms = date1.getTime();
+    return dates.compare(date0, date1);
+}
+
 function setupGameForMode(num) {
     var useDigital = false;
     gameMode = num;
@@ -251,29 +361,37 @@ function setupGameForMode(num) {
     $(".clock").hide();
     $(".alarm-clock").hide();
     $(".alarm-clock").attr("data-readonly", "false");
+    $(".elapsed-time-p").hide();
     console.log("num is " + num);
-    if(num === 0 || num === 1 || num === 3) {
+    if(num === 0 || num === 1 || num === 3 || num === 5) {
         $("#first-clock").show();
     }
     
     
     if(num < 2)
         $("#clock-correct-answer").hide();
-    else
+    else if(num < 4)
         $("#clock-correct-answer").show();
+    else
+        $("#clock-correct-answer").hide();
     if((num % 2) === 0)
         useDigital = false;
     else
         useDigital = true;
     
+    if(num >= 4)
+        $("#right-one").hide();
+    else
+        $("#right-one").show();
+    
     
     if(!useDigital) {
         $("#first-clock").attr("data-readonly", "true");
         $targetClock = $("#first-clock");
-        $answeredClock = $("#first-digital-clock");
+        $answeredClock = $("#first-alarm-clock");
     } else if(useDigital) {
-        $("#first-digital-clock").attr("data-readonly", "true");
-        $targetClock = $("#first-digital-clock");
+        $("#first-alarm-clock").attr("data-readonly", "true");
+        $targetClock = $("#first-alarm-clock");
         $answeredClock = $("#first-clock");
     }
     
@@ -281,13 +399,53 @@ function setupGameForMode(num) {
         currentPhrase = generateRandomTimePhrase();
         $(".time-phrase").text(currentPhrase[0]);
         if(!useDigital)
-            $("#first-digital-clock").show();
+            $("#first-alarm-clock").show();
         else
             $("#first-clock").show();
-    } else {
+    } else if(num < 4) {
         $targetClock.setClockTime(getRandomInt(1, 12), generateMinutes(), 0);
         $targetClock.show();
         $answeredClock.show();
+    } else {
+        var clockPortion;
+        if(num === 5)
+            clockPortion = "clock";
+        else
+            clockPortion = "alarm-clock";
+        $(".elapsed-time-p").show();
+        $(".clock").attr("data-readonly", "true");
+        $(".alarm-clock").attr("data-readonly", "true");
+        twoTimes = [];
+        for(var i = 0; i < 2; i++) {
+            twoTimes[i] = [];
+            twoTimes[i][0] = getRandomInt(1, 12);
+            twoTimes[i][1] = generateMinutes();
+            if(num === 5)
+                twoTimes[i][2] = false;
+            else
+                twoTimes[i][2] = getRandomInt(0, 1) === 1 ? true : false; /* AM/PM */
+            
+        }
+        
+        console.log("Comparison: " + timeComparison(twoTimes[0], twoTimes[1]));
+        if(timeComparison(twoTimes[0], twoTimes[1]) === 1) {
+            var tmp = twoTimes[0];
+            twoTimes[0] = twoTimes[1];
+            twoTimes[1] = tmp;
+            tmp = time0_ms;
+            time0_ms = time1_ms;
+            time1_ms = tmp;
+        }
+        for(var i = 0; i < 2; i++) {
+            var $clock = $("#" + (i === 1 ? "second" : "first") + "-" + clockPortion);
+            $clock.setClockTime(twoTimes[i][0], twoTimes[i][1]);
+            $clock.amPm(twoTimes[i][2]);
+        }
+        if(num === 5) {
+            $("." + clockPortion).show();
+        } else {
+            $("." + clockPortion).show();
+        }
     }
 }
 
@@ -335,12 +493,23 @@ function hourOffsetFromMinutes(m) {
 $(window).load(function() {
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 
-
+    
+    
     var observer = new MutationObserver(ClockReadonly);
 
-    observer.observe(document.querySelector(".alarm-clock"), {
+
+    var highlightedItems = document.querySelectorAll(".alarm-clock, .clock");
+
+    highlightedItems.forEach(function(userItem) {
+     observer.observe(userItem, {
       attributes: true //configure it to listen to attribute changes
+     });
     });
+    
+    
+    $("#second-clock").attr("data-readonly", "true");
+    
+    $("#second-alarm-clock").attr("data-readonly", "true");
     $("#select-mode").click(function() {
         var $selected = $("input[name=size]:checked");
         var op = parseInt($selected.val());
@@ -491,14 +660,14 @@ $(window).load(function() {
         }, 25);   
     });
     $("#second-hand").hide();
-    $(".clock").setClockTime(10, 10, 0);
-    $(".alarm-clock").setClockTime(12, 0, 0);
+    $("#first-clock").setClockTime(10, 10, 0);
+    $("#first-alarm-clock").setClockTime(12, 0, 0);
     var isOn = true;
     var colonFlash = function() {
         if(isOn)
-            $("#digital-colon").css({ opacity: '0' });
+            $(".digital-colon").css({ opacity: '0' });
         else
-            $("#digital-colon").css({ opacity: '1' });
+            $(".digital-colon").css({ opacity: '1' });
         isOn = !isOn;
         setTimeout(colonFlash, 500);
     };
@@ -510,11 +679,28 @@ $(window).load(function() {
             cm = parseInt($targetClock.attr("data-minute"));
             ah = parseInt($answeredClock.attr("data-hour"));
             am = parseInt($answeredClock.attr("data-minute"));
-        } else {
+        } else if(gameMode < 4) {
             ah = parseInt($answeredClock.attr("data-hour"));
             am = parseInt($answeredClock.attr("data-minute"));
             ch = currentPhrase[1][0];
             cm = currentPhrase[1][1];
+            
+        } else {
+            ah = ch = parseInt($("#elapsed-hours").val());
+            am = cm = parseInt($("#elapsed-minutes").val());
+            if(ch === undefined || isNaN(ch) || cm === undefined || isNaN(cm))
+                isCorrect = false;
+            
+            var ms = (ah * 60 * 60 * 1000) + (am * 60 * 1000);
+            console.log("Time0_ms: " + time0_ms);
+            console.log("Time1_ms: " + time1_ms);
+            console.log("According to you, there was a " + ms);
+            console.log("According to it, there was a " + (time1_ms - time0_ms));
+            
+            var ms = (ah * 60 * 60 * 1000) + (am * 60 * 1000);
+            if(Math.round(time0_ms + ms) !== time1_ms) {
+                isCorrect = false;
+            }
             
         }
         if(ah !== ch || am !== cm) {
@@ -526,7 +712,7 @@ $(window).load(function() {
             $("#hour").text(ch);
             $("#minute").text(pad(cm, 2));
             if(gameMode === 1)
-                $(".clock").setClockTime(ch, cm, 0, 1000);
+                $("#first-clock").setClockTime(ch, cm, 0, 1000);
         }
         console.log("Is correct: " + isCorrect);
         $("#next-button").removeProp("disabled");
@@ -541,6 +727,7 @@ $(window).load(function() {
         $("#check-button").removeProp("disabled");
         $("#next-button").prop("disabled", "disabled");
     });
+    $(".alarm-clock").amPm(true);
     colonFlash();
     $("#application").hide();
     $("#selector").show();

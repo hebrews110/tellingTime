@@ -13,7 +13,39 @@ and open the template in the editor.
 }
 
 
+.am-pm {
+    height: 100%;
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-size: inherit;
+    line-height: 0px;
+    vertical-align: bottom;
+}
 
+.am-pm span {
+    font: inherit;
+    position: relative;
+    font-size: 40%;
+    line-height: 100%;
+    z-index: 1;
+}
+
+
+.am-span:before, .pm-span:before {
+    color: rgb(50, 50, 50);
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: left;
+    z-index: -1;
+}
+.am-span:before {
+    content: 'AM';
+}
+
+.pm-span:before {
+    content: 'PM';
+}
 
 body, html {
     margin: 0;
@@ -32,6 +64,10 @@ body, html {
     border-radius: 50%;
     position: relative;
     display: inline-block;
+}
+
+.elapsed-time-p {
+    font-size: 3vmin;
 }
 
 .my-button {
@@ -111,6 +147,7 @@ body, html {
     text-align: center;
     color: lightgreen;
     white-space: nowrap;
+    line-height: 0px;
     font-family: "dseg7_modernbold";
     font-size: 6vmin;
 }
@@ -135,6 +172,9 @@ a:hover { text-decoration: underline; }
     }
     .alarm-clock {
         font-size: 10vmin;
+    }
+    .elapsed-time-p {
+        font-size: 6vmin;
     }
 }
 
@@ -208,6 +248,8 @@ button:disabled .button-image {
   }
 }
 
+
+
 .alarm-clock-digit:not([disabled]):focus {
     animation-name: blinker;
     animation-duration: 1s;
@@ -227,9 +269,16 @@ button:disabled .button-image {
     position: relative;
     display: inline-block;
     vertical-align: middle;
+    line-height: 100%;
 }
 
-#digital-colon {
+.elapsed-time-input {
+    font-size: inherit;
+    font-family: "dseg7_modernbold";
+    vertical-align: middle;
+}
+
+.digital-colon {
     position: relative;
     z-index: 1;
 }
@@ -344,7 +393,7 @@ button:disabled .button-image {
         font-size: 3vmin;
     }
     .my-button {
-        width: 6em;
+        width: 7em;
         height: 1.6em;
     }
     #application a {
