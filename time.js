@@ -413,6 +413,7 @@ function setupGameForMode(num) {
         else
             clockPortion = "alarm-clock";
         $(".elapsed-time-p").show();
+        $(".elapsed-time-input").val("");
         $(".clock").attr("data-readonly", "true");
         $(".alarm-clock").attr("data-readonly", "true");
         twoTimes = [];
