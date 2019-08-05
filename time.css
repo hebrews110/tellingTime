@@ -353,7 +353,8 @@ button:disabled .button-image {
 }
 
 .clock-hand img:nth-child(1) {
-    max-width: 400%;
+    width: 400%;
+    height: 50%;
     pointer-events: none;
     position: absolute;
     left: 50%;
