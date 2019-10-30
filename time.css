@@ -127,6 +127,7 @@ body, html {
     transform-origin: bottom center;
     transform: translateX(-50%) rotate(90deg);
     -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 .instrs {

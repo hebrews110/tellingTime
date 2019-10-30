@@ -379,7 +379,7 @@ function setupGameForMode(num) {
     else
         useDigital = true;
     
-    if(num >= 4)
+    if(num >= 2 && num < 4)
         $("#right-one").hide();
     else
         $("#right-one").show();
@@ -675,6 +675,8 @@ $(window).load(function() {
     $("#check-button").click(function() {
         var isCorrect = true;
         var ch, cm, ah, am;
+        var elapsedTimeHours;
+        var elapsedTimeMinutes;
         if(gameMode < 2) {
             ch = parseInt($targetClock.attr("data-hour"));
             cm = parseInt($targetClock.attr("data-minute"));
@@ -701,8 +703,11 @@ $(window).load(function() {
             var ms = (ah * 60 * 60 * 1000) + (am * 60 * 1000);
             if(Math.round(time0_ms + ms) !== time1_ms) {
                 isCorrect = false;
+                var diff = (time1_ms - time0_ms);
+                elapsedTimeHours = Math.trunc(diff / (60*60*1000));
+                diff -= (elapsedTimeHours * 60 * 60 * 1000);
+                elapsedTimeMinutes = Math.trunc(diff/1000/60);
             }
-            
         }
         if(ah !== ch || am !== cm) {
             isCorrect = false;
@@ -712,8 +717,17 @@ $(window).load(function() {
         if(!isCorrect) {
             $("#hour").text(ch);
             $("#minute").text(pad(cm, 2));
+            var $clockToSet = null;
             if(gameMode === 1)
-                $("#first-clock").setClockTime(ch, cm, 0, 1000);
+                $clockToSet = $("#first-clock");
+            else if(gameMode == 0)
+                $clockToSet = $("#first-alarm-clock");
+            else if(gameMode >= 4) {
+                $("#elapsed-hours").val(elapsedTimeHours);
+                $("#elapsed-minutes").val(elapsedTimeMinutes);
+            }
+            if($clockToSet != null)
+                $clockToSet.setClockTime(ch, cm, 0, 1000);
         }
         console.log("Is correct: " + isCorrect);
         $("#next-button").removeProp("disabled");
