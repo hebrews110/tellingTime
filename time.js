@@ -689,6 +689,11 @@ $(window).load(function() {
             cm = currentPhrase[1][1];
             
         } else {
+            if($("#elapsed-minutes").val().trim().length == 0) {
+                $("#elapsed-minutes").val("0");
+            } else if($("#elapsed-hours").val().trim().length == 0) {
+                $("#elapsed-hours").val("0");
+            }
             ah = ch = parseInt($("#elapsed-hours").val());
             am = cm = parseInt($("#elapsed-minutes").val());
             if(ch === undefined || isNaN(ch) || cm === undefined || isNaN(cm))
