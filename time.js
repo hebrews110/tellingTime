@@ -20,13 +20,46 @@ var currentPhrase;
 var minutesGrouping = 1;
 
 function generateMinutes() {
-    return minutesGrouping * getRandomInt(0, (60/minutesGrouping)-1);
+    return minutesGrouping * getRandomInt(0, (60/minutesGrouping)-1, 'minute');
 }
 
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+/**
+ * Shuffles array in place.
+ * @param {Array} a items An array containing the items.
+ */
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
+}
+var randomSets = {};
+function getRandomInt(min, max, set) {
+    if(set == null) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    } else {
+        var randomSet = randomSets[set];
+        if(randomSet == null)
+            randomSet = [];
+        if(randomSet.length == 0) {
+            for(var i = min; i <= max; i++) {
+                randomSet.push(i);
+            }
+            shuffle(randomSet);
+        }
+        randomSets[set] = randomSet;
+        console.log(randomSet);
+        var i = randomSet.pop();
+        console.log(i);
+        return i;
+    }
+    
 }
 
 function generateRandomTimePhrase() {
@@ -125,7 +158,6 @@ $.fn.handId = function() {
 $.fn.amPm = function(isPm) {
     var $am = $(this).find(".am-span");
     var $pm = $(this).find(".pm-span");
-    console.log("Clock: " + $(this).attr("id") + " setting " + (isPm ? "PM" : "AM"));
     if(isPm) {
         $am.css({ color: 'transparent' });
         $pm.css({ color: '' });
@@ -159,7 +191,6 @@ $.fn.setClockTime = function(hours, minutes, seconds, duration) {
     
     return this.each(function () {
         if($(this).attr("data-type") === "analog") {
-            console.log("Minutes: " + minutes);
             $(this).animateHand(0, (hours * 5) + hourOffsetFromMinutes(minutes), duration);
             $(this).animateHand(1, minutes, duration);
             $(this).animateHand(2, seconds, duration);
@@ -260,7 +291,6 @@ function updateDigitalClock($clock) {
     var h = (lh * 10) + rh;
     var m = (lm * 10) + rm;
     
-    console.log("Digital h: " + h + " m: " + m);
     h = (h % 12);
     if(h === 0)
         h = 12;
@@ -324,9 +354,6 @@ function timeComparison(time0, time1) {
     var date0 = new Date();
     var date1 = new Date();
     
-    console.log("Time0: " + time0);
-    console.log("Time1: " + time1);
-    
     if(time0[2]) {
         if(time0[0] < 12) {
             time0[0] += 12;
@@ -341,9 +368,6 @@ function timeComparison(time0, time1) {
     } else if(time1[0] === 12) {
         time1[0] -= 12;
     }
-    
-    console.log("Time0: " + time0);
-    console.log("Time1: " + time1);
    
     date0.setTime((time0[0] * 60 * 60 * 1000) + (time0[1] * 60 * 1000));
     date1.setTime((time1[0] * 60 * 60 * 1000) + (time1[1] * 60 * 1000));
@@ -362,7 +386,6 @@ function setupGameForMode(num) {
     $(".alarm-clock").hide();
     $(".alarm-clock").attr("data-readonly", "false");
     $(".elapsed-time-p").hide();
-    console.log("num is " + num);
     if(num === 0 || num === 1 || num === 3 || num === 5) {
         $("#first-clock").show();
     }
@@ -572,7 +595,6 @@ $(window).load(function() {
             
             var n = hand_names.indexOf($clock.attr("data-chd"));
             
-            console.log("Moving: " + hand_names[n]);
             $clock.animateHand(n, angle/6, 0);
      
             
@@ -581,7 +603,6 @@ $(window).load(function() {
             
             var h = Math.round(((parseFloat($clock.attr("data-rot0")) / 5) - hourOffsetFromMinutes(m)) / 6);
             
-            console.log("Hour is " + h);
             $clock.attr("data-hour", h);
             
             var prev_m = m;
