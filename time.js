@@ -20,6 +20,7 @@ var currentPhrase;
 var minutesGrouping = 1;
 
 function generateMinutes() {
+    console.log("MINUTE GROUPING: " + minutesGrouping);
     return minutesGrouping * getRandomInt(0, (60/minutesGrouping)-1, 'minute');
 }
 
@@ -44,6 +45,7 @@ function getRandomInt(min, max, set) {
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
     } else {
+        console.log(set + " random int set gen - specified min " + min + " max " + max);
         var randomSet = randomSets[set];
         if(randomSet == null)
             randomSet = [];
@@ -52,11 +54,11 @@ function getRandomInt(min, max, set) {
                 randomSet.push(i);
             }
             shuffle(randomSet);
+            console.log("generated set: [ " + randomSet.join() + " ]");
         }
         randomSets[set] = randomSet;
-        console.log(randomSet);
         var i = randomSet.pop();
-        console.log(i);
+        console.log("popped random number " + i);
         return i;
     }
     
