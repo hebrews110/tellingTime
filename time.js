@@ -1,9 +1,5 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
+"use strict";
 
 var hand_names = [ "hour-hand", "minute-hand", "second-hand" ];
 
@@ -21,7 +17,7 @@ var minutesGrouping = 1;
 
 function generateMinutes() {
     console.log("MINUTE GROUPING: " + minutesGrouping);
-    return minutesGrouping * getRandomInt(0, (60/minutesGrouping)-1, 'minute');
+    return (minutesGrouping * (getRandomInt(0, ((60/minutesGrouping)|0)-1, 'minute') | 0)) | 0;
 }
 
 /**
@@ -43,7 +39,7 @@ function getRandomInt(min, max, set) {
     if(set == null) {
         min = Math.ceil(min);
         max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+        return (Math.floor(Math.random() * (max - min + 1)) + min) | 0;
     } else {
         console.log(set + " random int set gen - specified min " + min + " max " + max);
         var randomSet = randomSets[set];
@@ -51,15 +47,15 @@ function getRandomInt(min, max, set) {
             randomSet = [];
         if(randomSet.length == 0) {
             for(var i = min; i <= max; i++) {
-                randomSet.push(i);
+                randomSet.push(i|0);
             }
             shuffle(randomSet);
             console.log("generated set: [ " + randomSet.join() + " ]");
         }
         randomSets[set] = randomSet;
-        var i = randomSet.pop();
-        console.log("popped random number " + i);
-        return i;
+        var j = randomSet.pop();
+        console.log("popped random number " + j);
+        return j|0;
     }
     
 }
