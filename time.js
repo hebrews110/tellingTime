@@ -20,6 +20,7 @@ var currentPhrase;
 var minutesGrouping = 1;
 
 function generateMinutes() {
+    console.log("MINUTE GROUPING: " + minutesGrouping);
     return minutesGrouping * getRandomInt(0, (60/minutesGrouping)-1, 'minute');
 }
 
