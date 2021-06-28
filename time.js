@@ -374,9 +374,9 @@ function timeComparison(time0, time1) {
     return dates.compare(date0, date1);
 }
 
-function setupGameForMode(num) {
+function setupGameForMode() {
     var useDigital = false;
-    gameMode = num;
+    var num = gameMode;
     $(".instrs").hide();
     $("#mode-" + num + "-instrs").show();
     $(".clock").attr("data-readonly", "false");
@@ -474,6 +474,13 @@ function setupGameForMode(num) {
 function backToSelector() {
     $("#application").hide();
     $("#selector").show();
+    if ('URLSearchParams' in window) {
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.delete("gameMode");
+        searchParams.delete("minutesGrouping");
+        var newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
+        history.replaceState(null, '', newRelativePathQuery);
+    }
 }
 
 function setCaretPosition(el, caretPos) {
@@ -512,6 +519,34 @@ function hourOffsetFromMinutes(m) {
     return (m / 12);
 }
 
+function beginGame() {
+    setupGameForMode();
+    if ('URLSearchParams' in window) {
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("gameMode", gameMode);
+        searchParams.set("minutesGrouping", minutesGrouping);
+        var newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
+        history.replaceState(null, '', newRelativePathQuery);
+    }
+    $("#selector").hide();
+    $(".correct-text").hide();
+    $("#done").hide();
+    $("#next-button").prop("disabled", "disabled");
+    $("#check-button").removeProp("disabled");
+    $("#application").show();
+    $(window).resize();
+}
+
+/* https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript */
+function getParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
 $(window).load(function() {
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 
@@ -542,14 +577,8 @@ $(window).load(function() {
         if(isNaN(mg) || mg === undefined)
             return;
         minutesGrouping = mg;
-        setupGameForMode(op);
-        $("#selector").hide();
-        $(".correct-text").hide();
-        $("#done").hide();
-        $("#next-button").prop("disabled", "disabled");
-        $("#check-button").removeProp("disabled");
-        $("#application").show();
-        $(window).resize();
+        gameMode = op;
+        beginGame();
     });
     $(".clock-hand").on('dragstart', function(e) {
         e.preventDefault();
@@ -770,6 +799,12 @@ $(window).load(function() {
     $(".alarm-clock").amPm(true);
     colonFlash();
     $("#application").hide();
-    $("#selector").show();
+    if(getParameterByName("gameMode") != null) {
+        gameMode = parseInt(getParameterByName("gameMode"));
+        minutesGrouping = parseInt(getParameterByName("minutesGrouping"));
+        beginGame();
+    } else {
+        $("#selector").show();
+    }
     $(window).resize();
 });
