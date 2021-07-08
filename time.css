@@ -12,6 +12,10 @@ and open the template in the editor.
 
 }
 
+#application {
+    overflow: hidden;
+    display: none;
+}
 
 .am-pm {
     height: 100%;
@@ -401,4 +405,18 @@ button:disabled .button-image {
     #application a {
         font-size: 20px;
     }
+}
+
+@keyframes correct-end-of-game {
+    from {
+        transform: scale(2) rotate(0deg);
+    }
+    to {
+        transform: scale(1) rotate(360deg);
+    }
+}
+
+#correct-end-of-game {
+    animation: correct-end-of-game 2s linear;
+    animation-fill-mode: forwards;
 }

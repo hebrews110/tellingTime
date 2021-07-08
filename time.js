@@ -15,6 +15,8 @@ var currentPhrase;
 
 var minutesGrouping = 1;
 
+var currentQuestion = 0;
+
 function generateMinutes() {
     console.log("MINUTE GROUPING: " + minutesGrouping);
     return (minutesGrouping * (getRandomInt(0, ((60/minutesGrouping)|0)-1, 'minute') | 0)) | 0;
@@ -62,7 +64,7 @@ function getRandomInt(min, max, set) {
 
 function generateRandomTimePhrase() {
     var str;
-    var hour = getRandomInt(1, 12);
+    var hour = getRandomInt(1, 12, 'hour');
     var minute = generateMinutes();
     
     if(minute === 0) {
@@ -377,6 +379,7 @@ function timeComparison(time0, time1) {
 function setupGameForMode() {
     var useDigital = false;
     var num = gameMode;
+    currentQuestion = 0;
     $(".instrs").hide();
     $("#mode-" + num + "-instrs").show();
     $(".clock").attr("data-readonly", "false");
@@ -424,7 +427,7 @@ function setupGameForMode() {
         else
             $("#first-clock").show();
     } else if(num < 4) {
-        $targetClock.setClockTime(getRandomInt(1, 12), generateMinutes(), 0);
+        $targetClock.setClockTime(getRandomInt(1, 12, 'hour'), generateMinutes(), 0);
         $targetClock.show();
         $answeredClock.show();
     } else {
@@ -440,7 +443,7 @@ function setupGameForMode() {
         twoTimes = [];
         for(var i = 0; i < 2; i++) {
             twoTimes[i] = [];
-            twoTimes[i][0] = getRandomInt(1, 12);
+            twoTimes[i][0] = getRandomInt(1, 12, 'hour');
             twoTimes[i][1] = generateMinutes();
             if(num === 5)
                 twoTimes[i][2] = false;
@@ -784,17 +787,22 @@ $(window).load(function() {
                 $clockToSet.setClockTime(ch, cm, 0, 1000);
         }
         console.log("Is correct: " + isCorrect);
-        $("#next-button").removeProp("disabled");
+        currentQuestion++;
         $("#check-button").prop("disabled", "disabled");
         $(".clock").add(".alarm-clock").attr('data-readonly', 'true');
+        $("#next-button").removeProp("disabled");
     });
     $(".correct-text").hide();
     $("#next-button").prop("disabled", "disabled");
     $("#next-button").click(function() {
         $(".correct-text").hide();
-        setupGameForMode(gameMode);
-        $("#check-button").removeProp("disabled");
         $("#next-button").prop("disabled", "disabled");
+        if(currentQuestion < 10) {
+            setupGameForMode(gameMode);
+            $("#check-button").removeProp("disabled");
+        } else {
+            $("#correct-end-of-game").show();
+        }
     });
     $(".alarm-clock").amPm(true);
     colonFlash();
