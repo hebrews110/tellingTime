@@ -523,6 +523,7 @@ function hourOffsetFromMinutes(m) {
 }
 
 function beginGame() {
+    randomSets = {};
     setupGameForMode();
     if ('URLSearchParams' in window) {
         var searchParams = new URLSearchParams(window.location.search);
