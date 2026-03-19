@@ -639,7 +639,7 @@ $(window).load(function() {
             var prev_m = m;
             m = Math.round(parseFloat($clock.attr("data-rot1")) / 6);
             m = (m % 60);
-            m = roundTo(m, minutesGrouping);
+            m = roundTo(m, minutesGrouping) % 60;
             
             
             $clock.attr("data-minute", m);
